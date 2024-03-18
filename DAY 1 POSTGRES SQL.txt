@@ -85,3 +85,11 @@ FROM fatture
 GROUP BY EXTRACT(YEAR FROM data_fattura)
 ORDER BY anno;
 
+----------------------------------------------------------------------
+9)
+SELECT EXTRACT(YEAR FROM data_fattura) AS anno, COUNT (*) AS numero_fatture
+FROM fatture
+WHERE tipologia LIKE 'a%'
+GROUP BY EXTRACT (YEAR FROM data_fattura)
+HAVING COUNT (*) >= 2
+ORDER BY anno;
