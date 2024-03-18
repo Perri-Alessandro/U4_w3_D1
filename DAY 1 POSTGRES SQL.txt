@@ -1,0 +1,87 @@
+---------------------- POSTGRES SQL DAY1 ----------------------------
+1)
+INSERT INTO public.clienti (nome, cognome, anno_di_nascita)
+VALUES ('Valerio', 'Bianchi', '1993-10-06'),
+('Giorgio', 'Rocca', '1991-02-13'),
+('Mario', 'Rossi', '174-07-18');
+
+SELECT *
+FROM clienti
+WHERE nome = 'Mario';
+
+----------------------------------------------------------------------
+2)
+INSERT INTO public.clienti (nome, cognome, anno_di_nascita)
+VALUES ('Simone', 'Bianchi', '1982-12-09');
+
+SELECT *
+FROM clienti
+WHERE EXTRACT(YEAR FROM anno_di_nascita) = 1982;
+
+
+----------------------------------------------------------------------
+3)
+INSERT INTO public.fatture (tipologia, importo, iva, data_fattura)
+VALUES ('assistenza', '420.30', '25', '2023-12-21'),
+('assistenza', '360', '20', '2024-02-25'),
+('vendita', '680.00', '10', '2021-12-23');
+
+SELECT *
+FROM fatture
+WHERE iva = '20';
+
+
+----------------------------------------------------------------------
+4)
+INSERT INTO public.prodotti(descrizione, in_produzione, in_commercio, data_attivazione)
+VALUES ('Stereo - cddcddcdcdcdcddvdvdvd', 'true', 'false', '2024-01-26' ),
+('Jeans - cddcddcdcdcdcddvdvdvd', 'false', 'true', '2017-02-22' ),
+('Antivirus - cddcddccacdacddvdvdvd', 'true', 'true', '2017-07-04' );
+
+SELECT *
+FROM prodotti
+WHERE EXTRACT(YEAR FROM data_attivazione) = 2017 
+AND (in_produzione = 'true' OR in_commercio = 'true');
+
+----------------------------------------------------------------------
+5)
+SELECT fatture.*, clienti.*
+FROM fatture
+JOIN clienti ON fatture.id_cliente = clienti.numero_cliente
+WHERE fatture.importo < 1000;
+
+----------------------------------------------------------------------
+6)
+INSERT INTO public.fornitori(numero_fornitore, denominazione, regione_residenza)
+VALUES 
+    ('123e4567-e89b-12d3-a456-426614174000', 'RIVENDITORE MICRO PROCESSORI', 'Italy, Milan'),
+    ('e89b4567-12d3-a456-4266-123e17400014', 'PRODUTTORE CASE', 'England, London'),
+    ('a456e89b-12d3-4266-1740-000123e45678', 'FORNITURE MATERIALE ELETTRICO', 'China, Hong Kong');
+
+INSERT INTO public.fatture (tipologia, importo, iva, data_fattura)
+VALUES ('acquisto prodotti', '200.30', '25', '2021-12-01'),
+('assistenza', '501.40', '20', '2024-01-28');
+
+SELECT fatture.*, fornitori.*
+FROM fatture
+JOIN fornitori ON fatture.numero_fornitore = fornitori.numero_fornitore;
+
+----------------------------------------------------------------------
+7)
+SELECT 
+    EXTRACT(YEAR FROM data_fattura) AS anno,
+    COUNT(*) AS numero_fatture
+FROM fatture
+WHERE iva = 20
+GROUP BY EXTRACT(YEAR FROM data_fattura);
+
+----------------------------------------------------------------------
+8)
+SELECT 
+    EXTRACT(YEAR FROM data_fattura) AS anno,
+    COUNT(*) AS numero_fatture,
+    SUM(importo) AS somma_importi
+FROM fatture
+GROUP BY EXTRACT(YEAR FROM data_fattura)
+ORDER BY anno;
+
